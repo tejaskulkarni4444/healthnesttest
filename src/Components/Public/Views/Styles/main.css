@@ -1,0 +1,34 @@
+html, body,.App, #root{
+    height: 100%;
+}
+h1,h2,h3,h4,h5{
+    color: #20af8e;
+}
+.homeContainer{
+    display: flex;
+    background-color: #f3f1f1;
+    height: 100%;
+    width: 100%;
+    padding: 20px 0;
+}
+.sideBar{
+    max-width: 30%;
+    padding: 10px 20px 10px 40px;
+}
+.postFeed{
+    max-width: 70%;
+    padding: 10px 20px;
+}
+.paperDiv{
+    background-color: #fff;
+    border-radius: 6px;
+}
+.btn{
+    background-color: #20af8e;
+    border: 0;
+    padding: 10px 20px;
+}
+.btn:active, .btn:focus{
+    border: 0;
+    outline: 0
+}
