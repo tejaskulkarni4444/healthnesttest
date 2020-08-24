@@ -52,6 +52,8 @@ h1,h2,h3,h4,h5{
 }
 @media (max-width: 670px){
     .hide{ display: none }
+    .sideBar{ padding: 0 15px !important;}
+    .sideBar > .paperDiv { padding: 10px;}
     .sideBar, .postSection{
         display: block;
         max-width: 100% !important;
