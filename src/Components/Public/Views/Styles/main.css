@@ -39,18 +39,19 @@ h1,h2,h3,h4,h5{
     background-color: #c1bbbb;
     color: white;
 }
-.col-1{ width: 10%;}
-.col-9{width: 90%;}
+.col-1{ width: 10%; }
+.col-9{width: 90%; }
 .row{ margin: 10px auto }
-.label{ font-weight: 600;}
-.greenText{ color: #20af8e}
-.grayText{ color: #888888}
+.label{ font-weight: 600; }
+.greenText{ color: #20af8e }
+.grayText{ color: #888888 }
 @media (max-width: 900px){
     .postSection{
         width: 60%;
     }
 }
 @media (max-width: 670px){
+    .hide{ display: none }
     .sideBar, .postSection{
         display: block;
         max-width: 100% !important;

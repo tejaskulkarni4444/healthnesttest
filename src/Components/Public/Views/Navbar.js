@@ -8,7 +8,7 @@ import MessageIcon from '@material-ui/icons/ForumOutlined'
 import SearchIcon from '@material-ui/icons/Search'
 import FilledInput from '@material-ui/core/FilledInput'
 import InputAdornment from '@material-ui/core/InputAdornment'
-
+import { Link } from 'react-router-dom'
 
 class Navbar extends Component {
     render() {
@@ -16,8 +16,10 @@ class Navbar extends Component {
             <div className="navContainer">
                 <div className="navSection left">
                     <div>
-                        <FeedIcon className="navIcons"/>
-                        <span className="label navLink">Feed</span>
+                        <Link to="/">
+                            <FeedIcon className="navIcons"/>
+                            <span className="label navLink">Feed</span>
+                        </Link>
                     </div>
                     <div>
                         <CommunityIcon className="navIcons"/>
@@ -25,7 +27,7 @@ class Navbar extends Component {
                     </div>
                 </div>
                 <div className="navSection center">
-                    <Logo className="navIcons logo"/>
+                    <Link to="/"><Logo className="navIcons logo"/></Link>
                     <span className="label navLink logo">HealthNest</span>
                 </div>
                 <div className="navSection right">

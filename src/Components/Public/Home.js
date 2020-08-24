@@ -22,12 +22,12 @@ const styles = theme =>({
     topicTags:{
         display: 'inline-block',
         padding: '5px 10px',
-        width: '60px',
+        width: '65px',
         color: '#20af8e',
         backgroundColor: 'transparent',
         border: 'solid 1px #c5c0c0',
         borderRadius: '20px',
-        margin: '10px 5px',
+        margin: '10px',
         fontWeight: '600',
         cursor: 'pointer',
         fontSize: '12px',
@@ -53,7 +53,7 @@ const styles = theme =>({
     post:{ padding: '15px' },
     filterTags: { 
         display: 'flex',
-        '@media (max-width: 480px)':{ display: 'inline-block'}  
+        '@media (max-width: 785px)':{ display: 'inline-block'}
     },
     postOptionDropdown:{
         boxShadow: '-1px 0px 18px #888888',
@@ -89,14 +89,19 @@ class Home extends Component {
     
     componentDidMount(){
         const existingPosts = localStorage.getItem('postFeed') ? JSON.parse(localStorage.getItem('postFeed')) : []
+        const userInfoExists =  localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('postFeed')) : ''
+        if(!userInfoExists){
+            const info = { name: "Tejas", username:"tejask", email:"tejas@test.com", relation: "Patient's relative" }
+            localStorage.setItem('userInfo', JSON.stringify(info))            
+        }
         this.setState({prevFeedState: this.state.postFeed})
-        if(existingPosts) {
+        if(existingPosts.length !== 0) {
             this.setState({
                 postFeed: existingPosts
             },() => {
                 this.props.postAction(this.state)
             })
-        }
+        } else { localStorage.setItem('postFeed',JSON.stringify([])) }
     }
 
     renderTopicFilters = () => {
@@ -125,9 +130,8 @@ class Home extends Component {
         const { classes } = this.props
         const { postFeed, topicFilter, filteredFeed, optionsDropdownOpen } = this.state
         const filnalFeedList = topicFilter === 'All Posts' ? postFeed : filteredFeed
-        console.log(filnalFeedList)
         return <div className="postFeed">
-            {filnalFeedList.sort().reverse().map((post, i) => {
+            {filnalFeedList && filnalFeedList.sort().reverse().map((post, i) => {
             return  (<div key={i} className={classNames('row', 'paperDiv', classes.post)}>
                     {post['topicTags'].map(topic => <span key={topic} className={classNames(classes.postTags,"label" ,"grayText")}>{topic}</span>)}
                     <div className="row" style={{display:'flex'}}>
@@ -161,6 +165,7 @@ class Home extends Component {
                     </div>}
                 </div>)
             })}
+            {filnalFeedList.length === 0 && <h4>No existing posts. Start posting!</h4>}
         </div>
     }
 
@@ -185,7 +190,7 @@ class Home extends Component {
                 postFeed.map(async (post) => {
                     if(post['topicTags'].includes(this.state.topicFilter)){
                         await filteredFeedList.push(post)
-                        this.setState({filteredFeed: filteredFeedList},()=> console.log(this.state.filteredFeed))
+                        this.setState({filteredFeed: filteredFeedList})
                     } else { this.setState({filteredFeed: []}) }
                     return ''
                 })
@@ -193,12 +198,12 @@ class Home extends Component {
         })
     }
 
-    handleFeed = () => {
-       const { postFeed } = this.state
-       const {postInfo} = this.props
-        if(postFeed.length !== Object.entries(postInfo).length){
-            console.log(postInfo)
-            this.setState({postFeed: postInfo.postFeed}
+    handleFeed = () => {        //Handle and render new posts]
+        const { postFeed, topicFilter } = this.state
+        const { postInfo } = this.props
+        if((postFeed.length !== postInfo.postFeed.length)&& postInfo.postSuccessful){
+            let newFilteredFeed = postInfo.postFeed.filter(post => post.topicTags.includes(topicFilter))
+            this.setState({postFeed: postInfo.postFeed, filteredFeed: newFilteredFeed}
                 // ,()=> window.location.reload()
             )
         }
@@ -217,13 +222,17 @@ class Home extends Component {
         if(option === 'Delete post'){
             const newPostFeed = postFeed.filter(post => post.id !== id)
             const newFilteredFeed = filteredFeed.filter(post => post.id !== id)
+            console.log(newPostFeed)
+            console.log(newFilteredFeed)
             this.setState({ 
                 postFeed: newPostFeed,
                 filteredFeed: newFilteredFeed
             },
                 ()=> {
                     this.props.postAction(this.state)
-                    localStorage.setItem('postFeed', this.state.postFeed)
+                    if(this.state.postFeed.length === 0){
+                        localStorage.setItem('postFeed', JSON.stringify([]))
+                    } else { localStorage.setItem('postFeed', JSON.stringify(this.state.postFeed)) }
                 })
         } else {
             this.setState({optionsDropdownOpen: false})

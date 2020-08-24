@@ -3,10 +3,11 @@ import './Styles/main.css'
 import AvatarIcon from '@material-ui/icons/AccountCircle'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import BookmarksIcon from '@material-ui/icons/Bookmarks';
-import TvIcon from '@material-ui/icons/Tv';
-import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
-import DateRangeIcon from '@material-ui/icons/DateRange';
+import BookmarksIcon from '@material-ui/icons/Bookmarks'
+import TvIcon from '@material-ui/icons/Tv'
+import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer'
+import DateRangeIcon from '@material-ui/icons/DateRange'
+import { Link } from 'react-router-dom'
 
 const styles = theme =>({
     avatarIcon: { 
@@ -17,6 +18,8 @@ const styles = theme =>({
         '@media (max-width: 900px)':{display: 'block', margin: 'auto'}
     },
     userName:{ 
+        textDecoration: 'none',
+        color:'#000',
         lineHeight:'24px', 
         verticalAlign: 'top', 
         display: 'block'
@@ -33,23 +36,26 @@ const styles = theme =>({
         lineHeight: '30px',
         verticalAlign: 'top',
     },
+    sideBarLinks:{
+        '@media (max-width: 670px)':{display: 'none'}
+    }
 })
 
 var Sidebar = (props) => {
     const { classes } = props
     return(<React.Fragment>
         <div className={"paperDiv row"}>
-                <AvatarIcon className={classes.avatarIcon} />
+                <Link to="/profile"><AvatarIcon className={classes.avatarIcon} /></Link>
                 <div className={classes.userInfoContainer}>
-                    <span className={classNames("label", classes.userName)}>Tejas</span>
+                    <Link to="/profile"><span className={classNames("label", classes.userName)}>Tejas</span></Link>
                     <span className={classNames("label", classes.userRelation, "greenText")} style={{textTransform:"uppercase"}}>Patient's friend</span>
                 </div>
                 <div className="row hide">&nbsp;</div>
             </div>
             <div className="row hide">&nbsp;</div>
-            <hr/>
-            <div className="row">&nbsp;</div>
-            <div className="sideBarLinks">
+            <hr className="hide"/>
+            <div className="row hide">&nbsp;</div>
+            <div className={classes.sideBarLinks}>
                 <div className="row label grayText">Library</div>
                 <div className="row label">
                     <BookmarksIcon className={classes.sideIcons} />

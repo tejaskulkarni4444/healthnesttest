@@ -194,12 +194,13 @@ class PostModal extends Component {
     render() {
         const { classes } = this.props
         const { currentPostInfo, topics, mediaRow, isValidPost } = this.state
+        const { postType } = this.props.postInfo
         return (
             <div style={{backgroundColor: 'white'}}>
                 <hr style={{margin: '0'}}/>
                 <textarea 
                     className={classes.captionInput}
-                    placeholder="What's on your mind?"
+                    placeholder={postType === "Post" ? "Whats on your mind?" : `Enter ${postType}`}
                     value={this.state.currentPostInfo.caption}
                     onChange={(e)=> this.handleInput(e.target.value)}
                 />

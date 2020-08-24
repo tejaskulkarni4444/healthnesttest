@@ -3,6 +3,7 @@ import Home from './Components/Public/Home'
 import './App.css';
 import NavBar from './Components/Public/Views/Navbar'
 import { Route, Switch } from 'react-router-dom';
+import Profile from './Components/Private/Profile'
 
 export const Routes = () => {
   return (
@@ -10,7 +11,7 @@ export const Routes = () => {
         <NavBar />
         <Switch>
             <Route exact path="/" component={Home} />
-            {/* <Route exact path="/About" component={About} /> */}
+            <Route exact path="/profile" component={Profile} />
         </Switch>
     </div>
   );

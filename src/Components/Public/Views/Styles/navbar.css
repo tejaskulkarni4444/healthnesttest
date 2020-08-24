@@ -6,6 +6,9 @@
     background-color: #20af8e;
     padding: 10px;
 }
+a{ 
+    text-decoration: none; 
+}
 .navSection{
     width: 33.33%;
 }

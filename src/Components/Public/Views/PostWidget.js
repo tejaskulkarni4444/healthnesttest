@@ -55,6 +55,7 @@ const styles = theme =>({
         fontSize: '12px',
         lineHeight: '20px',
         fontWeight: '500',
+        cursor: 'pointer',
         color: '#20af8e',
         '@media (max-width: 480px)':{ textAlign: 'center'}
     },
@@ -124,36 +125,40 @@ class PostWidget extends Component {
         }
     }
 
+    handleTypeSelect = (type) => this.setState({postModalOpen: true, postType: type})
+
     renderPostTypeBar = (isPopup = false) =>{
         const { classes } = this.props
         const { postType } = this.state
         return <div className={classNames(classes.topBar, isPopup ? classes.modalTopBar: '')}>
             <div className={classNames(classes.postType, isPopup ? classes.modalPostType : '', 
-            isPopup && postType === 'Post' ? classes.selected: '')}>
+                isPopup && postType === 'Post' ? classes.selected: '')}
+                onClick={()=> this.handleTypeSelect('Post')}
+            >
                 <EditIcon className={classNames(classes.widgetIcon,isPopup ? classes.widgetModalIcon: '')} 
-                    onClick={()=> this.setState({postModalOpen: true, postType: 'Post'})}
+                    // onClick={()=> this.handleTypeSelect({postModalOpen: true, postType: 'Post'})}
                 />
-                <label className={classes.widgetIconLabel}>Post</label>
+                <label className={classes.widgetIconLabel} >Post</label>
             </div>
             <div className={classNames(classes.postType, isPopup ? classes.modalPostType : '', 
-                isPopup && postType === 'Question'? classes.selected: '')}>
-                <HelpIcon className={classNames(classes.widgetIcon,isPopup ? classes.widgetModalIcon: '')} 
-                    onClick={()=> this.setState({postModalOpen: true, postType:'Question'})}
-                />
+                isPopup && postType === 'Question'? classes.selected: '')}
+                onClick={()=> this.handleTypeSelect('Question')}
+            >
+                <HelpIcon className={classNames(classes.widgetIcon,isPopup ? classes.widgetModalIcon: '')} />
                 <label className={classes.widgetIconLabel}>Ask Question</label>
             </div>
             <div className={classNames(classes.postType, isPopup ? classes.modalPostType : '', 
-                isPopup && postType === 'Poll'? classes.selected: '')}>
-                <PollOutlinedIcon className={classNames(classes.widgetIcon,isPopup ? classes.widgetModalIcon: '')} 
-                    onClick={()=> this.setState({postModalOpen: true, postType:'Poll'})}
-                />
+                isPopup && postType === 'Poll'? classes.selected: '')}
+                onClick={()=> this.handleTypeSelect('Poll')}
+            >
+                <PollOutlinedIcon className={classNames(classes.widgetIcon,isPopup ? classes.widgetModalIcon: '')} />
                 <label className={classes.widgetIconLabel}>Poll</label>
             </div>
             <div className={classNames(classes.postType, isPopup ? classes.modalPostType : '', 
-                isPopup && postType === 'Event'? classes.selected: '')}>
-                <DateRangeIcon className={classNames(classes.widgetIcon,isPopup ? classes.widgetModalIcon: '')} 
-                    onClick={()=> this.setState({postModalOpen: true, postType:'Event'})}
-                />
+                isPopup && postType === 'Event'? classes.selected: '')}
+                onClick={()=> this.handleTypeSelect('Event')}
+            >
+                <DateRangeIcon className={classNames(classes.widgetIcon,isPopup ? classes.widgetModalIcon: '')} />
                 <label className={classes.widgetIconLabel}>Event</label>
             </div>
         </div>
@@ -169,7 +174,7 @@ class PostWidget extends Component {
                     <div className={classes.widgetInputContainer}>
                         <input 
                             type="text" 
-                            placeholder="Whats on your mind?" 
+                            placeholder="Whats on your mind?"
                             className={classes.widgetInput}
                             onClick={()=> this.setState({postModalOpen: true, postType: 'Post'})}
                             disabled={postModalOpen}
