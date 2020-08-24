@@ -5,13 +5,16 @@ import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
 import LocationIcon from '@material-ui/icons/LocationOnOutlined'
 import AddMediaIcon from '@material-ui/icons/AddPhotoAlternateOutlined'
-// import { connect } from 'react-redux'
+import {connect} from 'react-redux'
+import {postAction} from '../../../Redux/Actions/postWidgetActions'
+import classNames from 'classnames'
 
-// function mapStateToProps(state) {
-//     return {
-
-//     }
-// }
+const mapDispatchToProps = dispatch => ({
+    postAction: (value) => dispatch(postAction(value))
+})
+const mapStateToProps = (state) => {
+    return { storePostFeed: state.postActReducer }
+}
 const styles = theme =>({
     row:{
         margin: '10px auto'
@@ -34,13 +37,24 @@ const styles = theme =>({
     },
     removeBtn:{
         cursor: 'pointer',
-        padding: '0 5px',
-        fontSize: '20px'
+        padding: '0 0 0 15px',
+        fontSize: '14px',
+        verticalAlign: 'top'
+    },
+    mediaRemoveBtn:{
+        position: 'relative',
+        left: '110px',
     },
     inputIcons:{
         cursor: 'pointer',
         color: '#c5c0c0'
-    }
+    },
+    postBtn:{
+        display: 'block',
+        marginLeft: 'auto',
+        cursor: 'pointer'
+    },
+    previewImage: { maxWidth: '100px'}
 })
 
 class PostModal extends Component {
@@ -56,11 +70,13 @@ class PostModal extends Component {
         postFeed: [],
         topics: ['News', 'Diet', 'LifeStyle', 'Symptoms', 'Treatment', 'Misc'],
         mediaRow: false,
-        isValidPost: false
+        isValidPost: false,
+        postSuccessful: false
     }
     componentDidMount(){
        const { postInfo } = this.props
        const existingPosts = localStorage.getItem('postFeed') ? JSON.parse(localStorage.getItem('postFeed')) : []
+       this.setState({ postSuccessful: false})
        if(existingPosts) this.setState({postFeed: existingPosts})
        if (postInfo.postType){
            this.setState(state => {
@@ -78,8 +94,11 @@ class PostModal extends Component {
 
     isValidPost = () => {
         const { currentPostInfo } = this.state
-        const isValidMedia = currentPostInfo['media'] === 'unset' || currentPostInfo['media'].includes('base64')
-        let isValidPost = Object.keys(currentPostInfo).map(key => {
+        const isValidMedia = (currentPostInfo['media'] === 'unset' ||
+         currentPostInfo['media'].includes('base64') || 
+          currentPostInfo['media'].includes('blob'))   //Check if media value is valid
+        let isValidPost = Object.keys(currentPostInfo)
+        .map(key => {
             if(isValidMedia && currentPostInfo[key].length !== 0 && currentPostInfo[key] !== ' ' 
                 && currentPostInfo[key] !== undefined){
                 return true
@@ -87,7 +106,8 @@ class PostModal extends Component {
         })
         return !isValidPost.includes(false)
     }
-    handleInput = (value) => {
+
+    handleInput = (value) => {  //Set latest changes to state
         this.setState(state => {
             state.currentPostInfo.caption = value
             return state
@@ -95,7 +115,7 @@ class PostModal extends Component {
     }
 
     handleTopicSelect = (value) => {
-        const { topicTags } = this.state.currentPostInfo
+        const { topicTags } = this.state.currentPostInfo      //Add topic to selected topics
         const tempTags = [...topicTags]
         if(value && !tempTags.includes(value)){
             tempTags.push(value)
@@ -106,7 +126,7 @@ class PostModal extends Component {
         }
     }
 
-    handleRemoveTag = (topic) => {
+    handleRemoveTag = (topic) => {  //Delete tags from the selected tags
         let tempTags = [...this.state.currentPostInfo.topicTags]
         if(topic && tempTags){
             this.setState(state => {
@@ -116,30 +136,40 @@ class PostModal extends Component {
         }
     }
 
-    handleImageInput = (event) => {
-        const myCanvas = document.getElementById('mycanvas')
-        const canvasContext = myCanvas.getContext('2d')
-        let base64URL = ''
-        let img = new Image()
-        img.onload = () => {
-            canvasContext.drawImage(img, 0, 0)
-            base64URL = myCanvas.toDataURL('image/jpeg')
-            if(base64URL) this.setState(state => {
-                state.currentPostInfo.media = base64URL
-                return state
-            })
-            // console.log(myCanvas.toDataURL('image/jpeg'))
-        }
-        img.src = URL.createObjectURL(event.target.files[0])
+    handleImageInput = (event) => {             //Store image as Object url in state
+        const url = event.target.files[0]
+        this.setState(state => {
+            state.currentPostInfo.media = URL.createObjectURL(url)
+            return state
+        })
     }
 
-    handleRemoveMedia = () => {
-        this.setState(state =>{
+    //Store image as base64 string
+    // handleImageInput = (event) => {
+        // const myCanvas = document.getElementById('mycanvas')
+        // const canvasContext = myCanvas.getContext('2d')
+        // let base64URL = ''
+        // let img = new Image()
+        // img.onload = () => {
+        //     canvasContext.drawImage(img, 0, 0)      //Draw image on canvas
+        //     base64URL = myCanvas.toDataURL('image/jpeg')    //Convert image to data url b64 version
+        //     if(base64URL) this.setState(state => {
+        //         state.currentPostInfo.media = base64URL
+        //         return state
+        //     })
+        //     // console.log(myCanvas.toDataURL('image/jpeg'))
+        // }
+        // img.src = URL.createObjectURL(event.target.files[0])
+    // }
+
+    handleRemoveMedia = () => {     //Remove current media selection
+        this.setState(state => {
             state.currentPostInfo.media = ''
             state.mediaRow = false
             return state
         })
     }
+
     handleSubmit = () => {
         const { isValidPost, currentPostInfo, postFeed } = this.state
         const tempFeed = [...postFeed]  //Copying state to temp
@@ -153,9 +183,10 @@ class PostModal extends Component {
         }
         if(isValidPost) {
             tempFeed.push(tempInfo)
-            this.setState({postFeed: tempFeed},()=> {
-                localStorage.setItem('postFeed', JSON.stringify(this.state.postFeed))
-                this.props.handlePostWidget(this.state)
+            this.setState({postFeed: tempFeed, postSuccessful: true},async ()=> {
+                await localStorage.setItem('postFeed', JSON.stringify(this.state.postFeed))
+                await this.props.postAction(this.state)
+                await this.props.handlePostWidget(this.state)
             })
         }
     }
@@ -165,7 +196,7 @@ class PostModal extends Component {
         const { currentPostInfo, topics, mediaRow, isValidPost } = this.state
         return (
             <div style={{backgroundColor: 'white'}}>
-                <hr />
+                <hr style={{margin: '0'}}/>
                 <textarea 
                     className={classes.captionInput}
                     placeholder="What's on your mind?"
@@ -173,9 +204,9 @@ class PostModal extends Component {
                     onChange={(e)=> this.handleInput(e.target.value)}
                 />
                 {mediaRow && <div className={classes.row}>
-                    {currentPostInfo.media && <span className={classes.removeBtn} onClick={()=> this.handleRemoveMedia()}>x</span>}
-                    <canvas width="100" height="100" id="mycanvas">
-                    </canvas>
+                    {currentPostInfo.media && <span className={classNames(classes.removeBtn, classes.mediaRemoveBtn)} onClick={()=> this.handleRemoveMedia()}>x</span>}
+                    {/* <canvas width="100" height="100" id="mycanvas"></canvas> */}
+                    <img src={this.state.currentPostInfo.media} className={classes.previewImage} alt="media preview"/>
                 </div>}
                 <div className={classes.row} style={{display:'flex', flexDirection:'row-reverse'}}>
                     <LocationIcon className={classes.inputIcons} />
@@ -206,16 +237,15 @@ class PostModal extends Component {
                 </div>
                 <div>
                     {currentPostInfo.topicTags.map((topic, index) => {
-                        return <div key={index} className={classes.selectedTags}>
+                        return <div key={index} className={classNames("label", classes.selectedTags)}>
                                     <span>{topic}</span>
                                     <span onClick={() => this.handleRemoveTag(topic)} className={classes.removeBtn}>x</span>
                                 </div>
                     })}
-                </div>
+                </div><hr/>
                 <div className="row">
-                    <button type="submit" 
-                        disabled={!isValidPost} 
-                        className="btn" 
+                    <button type="submit" disabled={!isValidPost} 
+                        className={classNames("btn", classes.postBtn, !isValidPost ? 'disabledBtn' : '')}
                         onClick={() => this.handleSubmit()}
                     >POST</button>
                 </div>
@@ -224,4 +254,4 @@ class PostModal extends Component {
     }
 }
 
-export default withStyles(styles)(PostModal)
+export default connect(mapStateToProps, mapDispatchToProps) (withStyles(styles)(PostModal))

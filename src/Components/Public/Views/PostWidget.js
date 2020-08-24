@@ -3,51 +3,60 @@ import './Styles/main.css'
 import EditIcon from '@material-ui/icons/EditOutlined'
 import HelpIcon from '@material-ui/icons/HelpOutlineOutlined'
 import PollOutlinedIcon from '@material-ui/icons/PollOutlined'
-// import DateRangeIcon from '@material-ui/icons/DateRange';
 import DateRangeIcon from '@material-ui/icons/DateRangeOutlined'
 import { withStyles } from '@material-ui/core/styles'
-// import { connect } from 'react-redux'
 import LocationIcon from '@material-ui/icons/LocationOnOutlined'
 import AddMediaIcon from '@material-ui/icons/AddPhotoAlternateOutlined';
 import classNames from 'classnames'
 import Modal from '@material-ui/core/Modal'
 import PostModal from './PostModal'
 
-// function mapStateToProps(state) {
-//     return {
-
-//     }
-// }
-
 const styles = theme =>({
     widgetContainer:{
-        padding: '10px'
+        padding: '10px',
+        display: 'flex',
+        flexDirection: 'column'
     },
     topBar: {
         padding: '10px',
         display: 'flex',
         flexDirection: 'row'
     },
+    modalTopBar:{ padding: '10px 10px 0 10px !important'},
     postType:{
         display: 'inline-flex',
         borderRight: 'solid 2px #f3f1f1',
         padding: '5px 20px 5px 0',
-        "&:last-child":{ borderRight:'none'}
+        "&:last-child":{ borderRight:'none'},
+        '@media (max-width: 480px)':{ 
+            display: 'inline-block',
+            padding: '5px',
+            width: '50%',
+            textAlign: 'center'
+        }
     },
     widgetIcon:{
         fontSize: '20px',
         color: '#20af8e',
         padding: '0 10px',
         cursor: 'pointer',
-        "&:hover":{
-            backgroundColor: '#b4f9d3'
+        '@media (max-width: 480px)':{ 
+            display: 'block',
+            margin: 'auto !important'
         }
+    },
+    widgetModalIcon:{
+        padding: '0',
+        margin: '0 10px',
+        backgroundColor: '#b4f9d3',
+        borderRadius: '50%'
     },
     widgetIconLabel:{
         fontSize: '12px',
         lineHeight: '20px',
         fontWeight: '500',
         color: '#20af8e',
+        '@media (max-width: 480px)':{ textAlign: 'center'}
     },
     widgetInputContainer:{
         display:'block',
@@ -60,31 +69,42 @@ const styles = theme =>({
         backgroundColor: '#f3f1f1',
         border: '0',
         outline: '0',
-        fontWeight:'500'
+        fontWeight:'500',
+        '@media (max-width: 480px)':{ width: '70%'}
     },
     inputIcons:{
         color: '#c5c0c0',
         verticalAlign: 'middle'
     },
     postPopup:{
-        backgroundColor: '#fff',
-        width: '50%',
+        width: '60%',
         left:'25% !important',
-        top: '15% !important',
+        top: '5% !important',
         height: 'auto',
-        outline: '0'
+        outline: '0',
+        overflowY:'scroll',
+        '@media (max-width: 670px)':{ 
+            width: '100%',
+            left: '0 !important'
+        }
     },
     selected: { borderBottom: 'solid 1px #20af8e'},
     closeBtn: {
         textAlign: 'right',
         fontWeight: '600',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        padding: '5px 0',
+        fontSize: '20px'
     },
     modalContainer:{
         display: 'flex',
         flexDirection: 'column',
         padding: '15px',
         outline: '0'
+    },
+    modalPostType:{
+        '@media (max-width: 670px)':{ display:'inline-flex'},
+        '@media (max-width: 480px)':{ display:'inline-block'}
     }
 })
 
@@ -93,42 +113,45 @@ class PostWidget extends Component {
         postModalOpen: false,
         postType: ''
     }
-    componentDidMount(){
 
-    }
-
-    handleModalClose = () => {
-        this.setState({ postModalOpen: false})
-    }
+    handleModalClose = () => this.setState({ postModalOpen: false})
 
     handleWidget = (data) =>{
-        console.log(data)
+        const { postSuccessful } = data
+        if(postSuccessful) {
+            this.setState({postModalOpen: false})
+            this.props.handleFeed()
+        }
     }
 
     renderPostTypeBar = (isPopup = false) =>{
         const { classes } = this.props
         const { postType } = this.state
-        return <div className={classes.topBar}>
-            <div className={classNames(classes.postType, isPopup && postType === 'Post' ? classes.selected: '')}>
-                <EditIcon className={classes.widgetIcon} 
+        return <div className={classNames(classes.topBar, isPopup ? classes.modalTopBar: '')}>
+            <div className={classNames(classes.postType, isPopup ? classes.modalPostType : '', 
+            isPopup && postType === 'Post' ? classes.selected: '')}>
+                <EditIcon className={classNames(classes.widgetIcon,isPopup ? classes.widgetModalIcon: '')} 
                     onClick={()=> this.setState({postModalOpen: true, postType: 'Post'})}
                 />
                 <label className={classes.widgetIconLabel}>Post</label>
             </div>
-            <div className={classNames(classes.postType, isPopup && postType === 'Question'? classes.selected: '')}>
-                <HelpIcon className={classes.widgetIcon} 
+            <div className={classNames(classes.postType, isPopup ? classes.modalPostType : '', 
+                isPopup && postType === 'Question'? classes.selected: '')}>
+                <HelpIcon className={classNames(classes.widgetIcon,isPopup ? classes.widgetModalIcon: '')} 
                     onClick={()=> this.setState({postModalOpen: true, postType:'Question'})}
                 />
                 <label className={classes.widgetIconLabel}>Ask Question</label>
             </div>
-            <div className={classNames(classes.postType, isPopup && postType === 'Poll'? classes.selected: '')}>
-                <PollOutlinedIcon className={classes.widgetIcon} 
+            <div className={classNames(classes.postType, isPopup ? classes.modalPostType : '', 
+                isPopup && postType === 'Poll'? classes.selected: '')}>
+                <PollOutlinedIcon className={classNames(classes.widgetIcon,isPopup ? classes.widgetModalIcon: '')} 
                     onClick={()=> this.setState({postModalOpen: true, postType:'Poll'})}
                 />
                 <label className={classes.widgetIconLabel}>Poll</label>
             </div>
-            <div className={classNames(classes.postType, isPopup && postType === 'Event'? classes.selected: '')}>
-                <DateRangeIcon className={classes.widgetIcon} 
+            <div className={classNames(classes.postType, isPopup ? classes.modalPostType : '', 
+                isPopup && postType === 'Event'? classes.selected: '')}>
+                <DateRangeIcon className={classNames(classes.widgetIcon,isPopup ? classes.widgetModalIcon: '')} 
                     onClick={()=> this.setState({postModalOpen: true, postType:'Event'})}
                 />
                 <label className={classes.widgetIconLabel}>Event</label>
@@ -151,8 +174,12 @@ class PostWidget extends Component {
                             onClick={()=> this.setState({postModalOpen: true, postType: 'Post'})}
                             disabled={postModalOpen}
                         />
-                        <LocationIcon className={classes.inputIcons} />
-                        <AddMediaIcon  className={classes.inputIcons}/>
+                        <LocationIcon className={classes.inputIcons} 
+                            onClick={()=> this.setState({postModalOpen: true, postType: 'Post'})}
+                        />
+                        <AddMediaIcon  className={classes.inputIcons}
+                            onClick={()=> this.setState({postModalOpen: true, postType: 'Post'})}
+                        />
                     </div>
                 </div>
                 <Modal
@@ -163,8 +190,8 @@ class PostWidget extends Component {
                     <div className={classNames(classes.modalContainer, "paperDiv")}>
                         <span className={classes.closeBtn}
                             onClick={()=> this.handleModalClose()}
-                        >x</span>
-                        <hr />
+                        >x</span><hr style={{margin: '1px 0px',}}/>
+                        {<hr/>}
                         {this.renderPostTypeBar(true)}
                         <PostModal postInfo={this.state} handlePostWidget={this.handleWidget}/>
                     </div>

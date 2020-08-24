@@ -1,7 +1,64 @@
 .navContainer{
     display: flex;
+    max-width: 100%;
     flex-wrap: nowrap;
     flex-direction: row;
     background-color: #20af8e;
-    padding: 10px 30px;
+    padding: 10px;
+}
+.navSection{
+    width: 33.33%;
+}
+.navSection > div {
+    display: inline-block;
+    margin: 0 10px;
+}
+.left, .right, .center{
+    padding: 0 10px;
+}
+.left{
+    display: flex;
+    justify-content: flex-start;}
+.center{display: flex;
+    justify-content: center;}
+.right{
+    display: flex;
+    justify-content: flex-end;
+}
+.navIcons{
+    color: #fff;
+    margin: 0 10px;
+    cursor: pointer;
+}
+.navSearch{
+    display: inline-flex !important;
+    border-radius: 5px;
+    background-color: #bdb7b7 !important;
+}
+.navSearch > input{
+    padding: 5px;
+}
+.navSearch::before, .navSearch::after{
+    border-bottom: none !important;
+}
+.navLink{
+    color: #fff;
+    vertical-align: top;
+    line-height: 25px;
+    cursor: pointer;
+}
+@media (max-width: 870px){
+    .left{display: none;}
+    .center{ width: 20%;}
+    .right{
+        width: 90%;
+    }
+    .navSearch{ width: 65%;}
+}
+@media (max-width: 600px){
+    .navIcons, .sideBarLinks{ display: none !important;}
+    .navLink{ display: none}
+    .logo{ display: inline-block !important;}
+    .navSearch{ width: 85%;}
+    span.logo{ display: none !important}
 }

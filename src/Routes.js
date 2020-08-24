@@ -1,12 +1,12 @@
 import React from 'react';
 import Home from './Components/Public/Home'
-// import { About } from './views/About';
+import './App.css';
 import NavBar from './Components/Public/Views/Navbar'
 import { Route, Switch } from 'react-router-dom';
 
 export const Routes = () => {
   return (
-    <div>
+    <div className="App">
         <NavBar />
         <Switch>
             <Route exact path="/" component={Home} />

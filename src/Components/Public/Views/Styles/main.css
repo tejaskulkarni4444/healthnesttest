@@ -1,23 +1,26 @@
 html, body,.App, #root{
+    width: 100%;
     height: 100%;
+    background-color: #f3f1f1;
 }
 h1,h2,h3,h4,h5{
     color: #20af8e;
 }
 .homeContainer{
-    display: flex;
     background-color: #f3f1f1;
-    height: 100%;
     width: 100%;
     padding: 20px 0;
 }
 .sideBar{
-    max-width: 30%;
+    width: 25%;
     padding: 10px 20px 10px 40px;
+    display: inline-block;
 }
-.postFeed{
-    max-width: 70%;
+.postSection{
+    width: 48%;
     padding: 10px 20px;
+    display: inline-block;
+    vertical-align: top;
 }
 .paperDiv{
     background-color: #fff;
@@ -26,9 +29,32 @@ h1,h2,h3,h4,h5{
 .btn{
     background-color: #20af8e;
     border: 0;
-    padding: 10px 20px;
+    padding: 10px 30px;
 }
 .btn:active, .btn:focus{
     border: 0;
     outline: 0
+}
+.disabledBtn{
+    background-color: #c1bbbb;
+    color: white;
+}
+.col-1{ width: 10%;}
+.col-9{width: 90%;}
+.row{ margin: 10px auto }
+.label{ font-weight: 600;}
+.greenText{ color: #20af8e}
+.grayText{ color: #888888}
+@media (max-width: 900px){
+    .postSection{
+        width: 60%;
+    }
+}
+@media (max-width: 670px){
+    .sideBar, .postSection{
+        display: block;
+        max-width: 100% !important;
+        width: auto;
+        padding: 15px;
+    }
 }
